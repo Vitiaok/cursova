@@ -4,7 +4,7 @@ const guest_team_input = document.getElementById('guest_team');
 
 
 function createDataRow(headerText, data) {
-    // Create the header row
+    
     const headerRow = document.createElement('tr');
     const th = document.createElement('th');
     th.textContent = headerText;
@@ -12,7 +12,7 @@ function createDataRow(headerText, data) {
     headerRow.appendChild(th);
     dataTable.appendChild(headerRow);
   
-    // Create the data row
+    
     const dataRow = document.createElement('tr');
     const td1 = document.createElement('td');
     td1.textContent = data[0];
@@ -31,11 +31,11 @@ showMatchButton.addEventListener('click', () => {
     const guest_team_term = guest_team_input.value;
     dataTable.innerHTML = '';
     errorMessage.textContent = '';
-       // Assuming you have an endpoint on the server to handle the search
+       
        fetch(`/getMatchData?term1=${home_team_term}&term2=${guest_team_term}`)
            .then(response => response.json())
            .then(data => {
-               // Clear previous table content
+               
                
               if(home_team_input.value != '' && guest_team_input.value != '')
               {
@@ -46,15 +46,15 @@ showMatchButton.addEventListener('click', () => {
                     const headerRow1 = document.createElement('tr');
                     const th1 = document.createElement('th');
                     th1.textContent = 'Раунд чемпіонату';
-                    th1.setAttribute('colspan', '2'); // Span across 2 columns
+                    th1.setAttribute('colspan', '2'); 
                     headerRow1.appendChild(th1);
                     dataTable.appendChild(headerRow1);
               
-                    // Create the data row for championat_round
+                    
                     const dataRow1 = document.createElement('tr');
                     const td1 = document.createElement('td');
                     td1.textContent = data[0].championat_round;
-                    td1.setAttribute('colspan', '2'); // Span across 2 columns
+                    td1.setAttribute('colspan', '2'); 
                     dataRow1.appendChild(td1);
                     dataTable.appendChild(dataRow1);
                 
@@ -70,7 +70,7 @@ showMatchButton.addEventListener('click', () => {
               
                     dataTable.appendChild(headerRow2);
               
-                    // Create the data row for home_team and guest_team
+                    
                     const dataRow2 = document.createElement('tr');
                     const td2_1 = document.createElement('td');
                     td2_1.textContent = data[0].home_team;
@@ -95,7 +95,7 @@ showMatchButton.addEventListener('click', () => {
                     //row8
                     createDataRow('Небезпечні атаки', [data[0].h_dangerous_attacks,data[0].g_dangerous_attacks]);
                 } else {
-                    // If no results, display a message
+                    
                     dataTable.innerHTML = '<p>Цей матч ще не відбувся</p>';
                 }
               }
@@ -103,11 +103,11 @@ showMatchButton.addEventListener('click', () => {
               {
                 errorMessage.textContent = 'Помилка. Ви не ввели команду';
               }
-               // Display the search result in a table
+               
                
            })
            .catch(error => {
-               console.error('Error searching data:', error);
+               console.error('Помилка пошуку:', error);
            });
 
 });

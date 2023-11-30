@@ -34,7 +34,6 @@ const handleQueryResult = (err, results, res) => {
 app.use(express.static(path.join(__dirname)));
 
 app.get('/', (req, res) => {
-  //res.setHeader('Content-Type', 'text/html;charset=utf-8');
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
@@ -57,16 +56,495 @@ app.get('/getMatchData', (req, res) => {
 
 app.get('/getTeamData', (req, res) => {
   const team_name_term = req.query.term;
-  const query = `SELECT * FROM team where team_name LIKE '%${team_name_term}%'`;
+  const query = `
+  SELECT
+    team,
+    CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+    CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+    cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+    CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+    CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+    CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+        home_team AS team,
+        AVG(h_scored_goals) AS avg_scored_goals,
+        AVG(h_possesion_in_percents) AS avg_possession,
+        AVG(h_total_attempts) AS avg_total_attempts,
+        AVG(h_shots_on_target) AS avg_shots_on_target,
+        AVG(h_total_attacks) AS avg_total_attacks,
+        AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+        football_matches
+  INNER JOIN
+        home_statistics ON t1_id = home_id
+  WHERE
+        home_team like '%${team_name_term}%'
+  GROUP BY
+        home_team
+
+  UNION
+
+  SELECT
+        guest_team AS team,
+        AVG(g_scored_goals) AS avg_scored_goals,
+        AVG(g_possesion_in_percents) AS avg_possession,
+        AVG(g_total_attempts) AS avg_total_attempts,
+        AVG(g_shots_on_target) AS avg_shots_on_target,
+        AVG(g_total_attacks) AS avg_total_attacks,
+        AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+        football_matches
+  INNER JOIN
+        guest_statistics ON t1_id = guest_id
+  WHERE
+        guest_team like '%${team_name_term}%'
+  GROUP BY
+        guest_team
+    ) AS subquery
+  GROUP BY
+    team;`
+  
+  
   connection.query(query, (err, results) => {
     handleQueryResult(err, results, res);
   });
 });
 
+app.get('/getAllTeamData', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+  team;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton2', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+  overall_avg_scored_goals desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton3', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+  overall_avg_possession desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton4', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+  overall_avg_total_attempts desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton5', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+ overall_avg_shots_on_target desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton6', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+ overall_avg_total_attacks desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+app.get('/getSortButton7', (req, res) => {
+  
+  const query2 = `
+  SELECT
+  team,
+      CAST(AVG(avg_scored_goals) as decimal(10,3)) AS overall_avg_scored_goals,
+      CAST(AVG(avg_possession) as decimal(10,3)) AS overall_avg_possession,
+      cast(AVG(avg_total_attempts) as decimal(10,3)) AS overall_avg_total_attempts,
+      CAST(AVG(avg_shots_on_target) as decimal(10,3)) AS overall_avg_shots_on_target,
+      CAST(AVG(avg_total_attacks) as decimal(10,3)) AS overall_avg_total_attacks,
+      CAST(AVG(avg_dangerous_attacks) as decimal(10,3)) AS overall_avg_dangerous_attacks
+  FROM (
+  SELECT
+      home_team AS team,
+      AVG(h_scored_goals) AS avg_scored_goals,
+      AVG(h_possesion_in_percents) AS avg_possession,
+      AVG(h_total_attempts) AS avg_total_attempts,
+      AVG(h_shots_on_target) AS avg_shots_on_target,
+      AVG(h_total_attacks) AS avg_total_attacks,
+      AVG(h_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      home_statistics ON t1_id = home_id
+  GROUP BY
+      home_team
+
+  UNION
+
+  SELECT
+      guest_team AS team,
+      AVG(g_scored_goals) AS avg_scored_goals,
+      AVG(g_possesion_in_percents) AS avg_possession,
+      AVG(g_total_attempts) AS avg_total_attempts,
+      AVG(g_shots_on_target) AS avg_shots_on_target,
+      AVG(g_total_attacks) AS avg_total_attacks,
+      AVG(g_dangerous_attacks) AS avg_dangerous_attacks
+  FROM
+      football_matches
+  INNER JOIN
+      guest_statistics ON t1_id = guest_id
+  GROUP BY
+      guest_team
+) AS subquery
+GROUP BY
+  team
+Order by 
+ overall_avg_dangerous_attacks desc;`;
+
+  connection.query(query2, (err, results) => {
+    handleQueryResult(err, results, res);
+  });
+});
+
+
 app.get('/getPlayerData', (req, res) => {
   const player_name_term = req.query.term;
 
-  // Check if the player exists in the database
   const checkPlayerQuery = `SELECT COUNT(*) as playerCount FROM player WHERE full_name LIKE '%${player_name_term}%'`;
 
   connection.query(checkPlayerQuery, (err, countResult) => {
@@ -77,7 +555,7 @@ app.get('/getPlayerData', (req, res) => {
       const playerCount = countResult[0].playerCount;
 
       if (playerCount > 0) {
-        // Player exists, now fetch the player data
+        
         const query = `SELECT full_name,
           SUM(CASE WHEN (minute_of_goal > 0 AND minute_of_goal < 100) THEN 1 ELSE 0 END) AS goals_scored,
           SUM(CASE WHEN penalty = 1 THEN 1 ELSE 0 END) AS penalties_scored,
@@ -88,38 +566,15 @@ app.get('/getPlayerData', (req, res) => {
           GROUP BY full_name;`;
 
         connection.query(query, (err, results) => {
-          if (err) {
-            console.error('Error executing query:', err);
-            res.status(500).send('Internal Server Error');
-          } else {
-            res.json(results);
-          }
+          handleQueryResult(err, results, res);
         });
       } else {
-        // Player does not exist
         res.json({ error: 'Player not found' });
       }
     }
   });
 });
 
-/*
-app.get('/getPlayerData', (req, res) => {
-  const player_name_term = req.query.term;
-  const query2 = `SELECT full_name,
-    SUM(CASE WHEN (minute_of_goal > 0 AND minute_of_goal < 100) THEN 1 ELSE 0 END) AS goals_scored,
-    SUM(CASE WHEN penalty = 1 THEN 1 ELSE 0 END) AS penalties_scored,
-    SUM(CASE WHEN autogoal = 1 THEN 1 ELSE 0 END) AS autogoals_scored
-    FROM goals_stat 
-    INNER JOIN player ON author_of_goal_id = t2_id
-    WHERE full_name LIKE '%${player_name_term}%'
-    GROUP BY full_name;`;
-
-  connection.query(query2, (err, results) => {
-    handleQueryResult(err, results, res);
-  });
-});
-*/
 app.get('/getAllPlayerData', (req, res) => {
   
   const query2 = `SELECT full_name,
@@ -199,10 +654,6 @@ app.get('/getHiddenButton4Data', (req, res) => {
   });
 });
 
-
-
-
-// Маршрут для отримання даних з бази даних
 app.listen(port, () => {
   console.log('Сервер запущено на порту 5000');
 });

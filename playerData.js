@@ -8,35 +8,53 @@ const hiddenButton4 = document.getElementById('hiddenButton4');
 const p = document.getElementById('par');
 
 function handleButtonClick(endpoint) {
+    
+    errorMessage.textContent = '';
     fetch(endpoint)
         .then(response => response.json())
         .then(data => {
             dataTable.innerHTML = '';
-
-            if (data.length > 0) {
-                const headerRow = document.createElement('tr');
-                Object.keys(data[0]).forEach(key => {
-                    const th = document.createElement('th');
-                    th.textContent = key;
-                    headerRow.appendChild(th);
-                });
-                dataTable.appendChild(headerRow);
-
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    Object.values(item).forEach(value => {
-                        const td = document.createElement('td');
-                        td.textContent = value;
-                        row.appendChild(td);
+            
+           
+                if (data.error) {
+                    dataTable.innerHTML = `<p>Цього гравця не існує або він не грає в УПЛ</p>`;
+                } else if (data.length > 0) {
+                    const headerRow = document.createElement('tr');
+                    const th1 = document.createElement('th');
+                    const th2 = document.createElement('th');
+                    const th3 = document.createElement('th');
+                    const th4 = document.createElement('th');
+                    th1.textContent = 'Футболіст';
+                    th2.textContent = 'Кількість забитих голів';
+                    th3.textContent = 'Кількість забитих пенальті';
+                    th4.textContent = 'Кількість забитих автоголів';
+        
+                    headerRow.appendChild(th1);
+                    headerRow.appendChild(th2);
+                    headerRow.appendChild(th3);
+                    headerRow.appendChild(th4);
+                    
+                    dataTable.appendChild(headerRow);
+    
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        Object.values(item).forEach(value => {
+                            const td = document.createElement('td');
+                            td.textContent = value;
+                            row.appendChild(td);
+                        });
+                        dataTable.appendChild(row);
                     });
-                    dataTable.appendChild(row);
-                });
-            } else {
-                dataTable.innerHTML = '<p>Цей гравець ще не забив жодного голу</p>';
-            }
+                } else {
+                    dataTable.innerHTML = '<p>Цей гравець ще не забив жодного голу</p>';
+                }         
+                 
+    
+        
+        
         })
         .catch(error => {
-            console.error('Error searching data:', error);
+            console.error('Помилка пошуку:', error);
         });
 }
 
@@ -48,17 +66,27 @@ showPlayerButton.addEventListener('click', () => {
     hiddenButton4.style.display = 'none';
     p.style.display = 'none';
     const player_name_term = player_name_input.value;
-    handleButtonClick(`/getPlayerData?term=${player_name_term}`);
+    if(player_name_input.value !== '')
+    {
+     handleButtonClick(`/getPlayerData?term=${player_name_term}`);
+    }
+    else
+    {
+    dataTable.innerHTML = '';
+    errorMessage.textContent = 'Помилка. Ви не ввели гравця';
+    }
+    
 });
 
 showAllPlayerButton.addEventListener('click', () => {
-  
     hiddenButton.style.display = 'block';
     hiddenButton2.style.display = 'block';
     hiddenButton3.style.display = 'block';
     hiddenButton4.style.display = 'block';
     p.style.display = 'block';
+    
     handleButtonClick(`/getAllPlayerData`);
+    
 });
 
 hiddenButton.addEventListener('click', () => {
