@@ -2,9 +2,15 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
 
 const app = express();
 const port = 5000;
+app.use(bodyParser.json());
+app.use(cookieParser());
+
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -653,6 +659,56 @@ app.get('/getHiddenButton4Data', (req, res) => {
     handleQueryResult(err, results, res);
   });
 });
+
+const adminUsername = 'admin';
+const adminPassword = 'adminPassword';
+
+// Middleware to check if user is authenticated
+function authenticate(req, res, next) {
+  if (req.cookies && req.cookies.authenticated) {
+    // User is authenticated
+    next();
+  } else {
+    // User is not authenticated
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+}
+
+// Login endpoint
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Check if credentials are correct (in a real-world scenario, you'd hash and compare passwords)
+  if (username === adminUsername && password === adminPassword) {
+    // Set a cookie to mark the user as authenticated
+    res.cookie('authenticated', true);
+    res.json({ message: 'Login successful' });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+// Logout endpoint
+app.post('/logout', (req, res) => {
+  // Clear the authentication cookie
+  res.clearCookie('authenticated');
+  res.json({ message: 'Logout successful' });
+});
+
+// Example admin-only endpoint
+app.get('/admin', authenticate, (req, res) => {
+  res.sendFile(path.join(__dirname, 'index6.html'));
+});
+
+
+
+
+
+
+
+
+
+
 
 app.listen(port, () => {
   console.log('Сервер запущено на порту 5000');
