@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-
+const session = require('express-session');
 
 const app = express();
 const port = 5000;
@@ -660,6 +660,50 @@ app.get('/getHiddenButton4Data', (req, res) => {
   });
 });
 
+// Handling SELECT statements
+app.get('/executeSelect', (req, res) => {
+  const sqlQuery = req.query.sql;
+
+  connection.query(sqlQuery, (err, results) => {
+      if (err) {
+          console.error('Error executing SELECT statement:', err);
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      res.json(results);
+  });
+});
+
+// Handling UPDATE statements
+app.put('/executeUpdate', (req, res) => {
+  const sqlQuery = req.body.sql;
+
+  connection.query(sqlQuery, (err, results) => {
+      if (err) {
+          console.error('Error executing UPDATE statement:', err);
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      res.json(results);
+  });
+});
+
+// Handling INSERT INTO statements
+app.post('/executeInsert', (req, res) => {
+  const sqlQuery = req.body.sql;
+
+  connection.query(sqlQuery, (err, results) => {
+      if (err) {
+          console.error('Error executing INSERT INTO statement:', err);
+          return res.status(500).json({ error: 'Internal Server Error' });
+      }
+
+      res.json(results);
+  });
+});
+
+
+
 const adminUsername = 'admin';
 const adminPassword = 'adminPassword';
 
@@ -670,9 +714,25 @@ function authenticate(req, res, next) {
     next();
   } else {
     // User is not authenticated
-    res.status(401).json({ error: 'Unauthorized' });
+    res.redirect('index5.html')
   }
 }
+
+
+// Set no-cache headers
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
+});
+
+app.use(session({
+  secret: '12345', // Change this to a secure secret
+  resave: false,
+  saveUninitialized: false
+}));
+
 
 // Login endpoint
 app.post('/login', (req, res) => {
@@ -681,6 +741,8 @@ app.post('/login', (req, res) => {
   // Check if credentials are correct (in a real-world scenario, you'd hash and compare passwords)
   if (username === adminUsername && password === adminPassword) {
     // Set a cookie to mark the user as authenticated
+    
+    
     res.cookie('authenticated', true);
     res.json({ message: 'Login successful' });
   } else {
