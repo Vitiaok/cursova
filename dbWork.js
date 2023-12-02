@@ -56,7 +56,7 @@ executeQueryButton.addEventListener('click', () => {
 
     // Determine the type of SQL statement (SELECT, UPDATE, INSERT)
     const statementType = getSqlStatementType(sqlQuery);
-    console.log(sqlQuery);
+    console.log(statementType);
     if(statementType ==='Select'){
         // SELECT
         fetch(`/executeSelect?sql=${encodeURIComponent(sqlQuery)}`)
@@ -102,11 +102,12 @@ executeQueryButton.addEventListener('click', () => {
 
     }else{
         // INSERT INTO
-        fetch(`/executeInsert?sql=${encodeURIComponent(sqlQuery)}`, {
+        fetch('/executeInsert', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ sql: sqlQuery }), // Send the SQL query in the request body
         })
         .then(response => {
         if (!response.ok) {
@@ -122,6 +123,7 @@ executeQueryButton.addEventListener('click', () => {
         // Handle errors for INSERT INTO
         console.error('Error executing INSERT INTO:', error.message);
         });
+
     }
     
     

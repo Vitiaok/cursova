@@ -676,7 +676,7 @@ app.get('/executeSelect', (req, res) => {
 
 // Handling UPDATE statements
 app.put('/executeUpdate', (req, res) => {
-  const sqlQuery = req.body.sql;
+  const sqlQuery = req.query.sql; // Change to req.query to match client-side
 
   connection.query(sqlQuery, (err, results) => {
       if (err) {
@@ -688,19 +688,21 @@ app.put('/executeUpdate', (req, res) => {
   });
 });
 
-// Handling INSERT INTO statements
+
+
 app.post('/executeInsert', (req, res) => {
   const sqlQuery = req.body.sql;
 
   connection.query(sqlQuery, (err, results) => {
       if (err) {
           console.error('Error executing INSERT INTO statement:', err);
-          return res.status(500).json({ error: 'Internal Server Error' });
+          return res.status(500).json({ error: `Internal Server Error: ${err.message}` });
       }
 
       res.json(results);
   });
 });
+
 
 
 
