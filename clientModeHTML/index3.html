@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursova</title>
+</head>
+<body>
+
+  <h1><center>Введіть назву потрібної команди:</center></h1>
+  <center>
+    <input type="text" id="team_name" name="query" size="50" placeholder="Введіть тут">
+  </center>
+   <center>
+    <button id="find_team" type="button">Ввести</button>
+    <button id="find_all_teams" type="button">Вибрати всі команди</button>
+   </center>
+
+  
+   <center>
+    <table id="dataTable"></table>
+   </center>
+   <center>
+    <div id="errorMessage" style="color: red;"></div>
+   </center>
+
+   <p id="par2">Сортувати таблицю за:</p>
+   <button class="sort-button" id="sortButton" type="button">Назвою</button>
+   <button class="sort-button" id="sortButton2" type="button">Середньою кількістю голів</button>
+   <button class="sort-button" id="sortButton3" type="button">Середньою кількістю володіння м'ячем</button>
+   <button class="sort-button" id="sortButton4" type="button">Середньою кількістю ударів</button>
+   <button class="sort-button" id="sortButton5" type="button">Середньою кількістю ударів по воротах</button>
+   <button class="sort-button" id="sortButton6" type="button">Середньою кількістю атак</button>
+   <button class="sort-button" id="sortButton7" type="button">Середньою кількістю небезпечних атак</button>
+  
+ 
+  
+
+  <script src="/clientModeJS/teamData.js"></script>
+  
+  
+  
+</body>
+</html>

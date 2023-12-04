@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursova</title>
+</head>
+<body>
+
+  <h1><center>Введіть ім'я потрібного гравця:</center></h1>
+  <center>
+    <input type="text" id="player_name" name="query" size="50" placeholder="Введіть тут">
+  </center>
+   <center>
+    <button id="find_player" type="button">Ввести</button>
+    <button id="find_all_players" type="button">Вивести таблицю усіх гравців</button>
+   </center>
+  
+   
+   <center>
+    <table id="dataTable"></table>
+    <div class="button-container">
+      <p id="par">Сортувати таблицю за:</p>
+      <button class="hidden-button" id="hiddenButton" type="button">Ім'ям</button>
+      <button class="hidden-button" id="hiddenButton2" type="button">Голами</button>
+      <button class="hidden-button" id="hiddenButton3" type="button">Забитими пенальті</button>
+      <button class="hidden-button" id="hiddenButton4" type="button">Забитими автоголами</button>
+    </div>
+    
+   </center>
+   <center>
+    <div id="errorMessage" style="color: red;"></div>
+   </center>
+   
+   
+  
+
+  <script src="/clientModeJS/playerData.js"></script>
+  
+  
+  
+</body>
+</html>

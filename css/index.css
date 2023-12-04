@@ -1,0 +1,87 @@
+
+button{
+    margin: 10px;
+
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+  }
+.hidden-button {
+    display: none;
+    position: absolute; 
+    left: 1110px; 
+  }
+#hiddenButton {
+    top: 170px; 
+  }
+#hiddenButton2 {
+    top: 200px; 
+  }
+#hiddenButton3 {
+    top: 230px; 
+  }
+#hiddenButton4 {
+    top: 260px; 
+  }
+#par{
+    display: none;
+    position: absolute; 
+    top: 130px; 
+    left: 1120px;
+}
+.sort-button {
+  display: none;
+  position: absolute; 
+  width: 250px;
+  height: 35px;
+}
+#sortButton {
+  top: 530px;
+  left: 10px;
+}
+#sortButton2 {
+  top: 570px;
+  left: 10px;
+}
+#sortButton3 {
+  top: 610px;
+  left: 10px;
+}
+#sortButton4 {
+  top: 650px;
+  left: 10px;
+}
+#sortButton5 {
+  top: 530px;
+  left: 270px;
+}
+#sortButton6 {
+  top: 570px;
+  left: 270px;
+}
+#sortButton7 {
+  top: 610px;
+  left: 270px;
+}
+#par2{
+  display: none;
+  position: absolute; 
+  top: 500px; 
+  left: 20px;
+}
+#button4{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 10px; 
+}
+#logout {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 10px; 
+}
+
+

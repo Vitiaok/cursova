@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="/css/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursova</title>
+</head>
+<body>
+
+  <h1><center>Введення запитів до бази даних:</center></h1>
+  <center>
+    <input type="text" id="query" name="query" size="50" placeholder="Введіть тут">
+    <button id="execute_query" type="button">Виконати запит</button>
+  </center>
+  <button id="logout" type="button">Режим користувача</button>
+  
+   <center>
+    <div id="dataContainer">
+        <table id="dataTable">
+            <caption id="tableCaption"></caption>
+            <thead>
+                <tr>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Сюди будуть додаватися дані з бази даних -->
+            </tbody>
+        </table>
+    </div>
+   </center>
+   <center>
+   <div id="errorMessage" style="color: red;"></div>
+   </center>
+   
+   
+    
+    
+  
+ 
+  
+
+  <script src="/adminModeJS/dbWork.js"></script>
+  
+  
+  
+</body>
+</html>
